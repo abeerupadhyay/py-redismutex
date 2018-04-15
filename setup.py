@@ -22,7 +22,7 @@ setup(
     keywords="python redis mutex",
     classifiers=[
         'Environment :: Web Environment',
-        'License :: Copyright 2017 Doselect',
+        'License :: MIT',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
     ]
