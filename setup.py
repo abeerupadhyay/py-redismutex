@@ -21,7 +21,6 @@ setup(
     zip_safe=False,
     keywords="python redis mutex",
     classifiers=[
-        'Environment :: Web Environment',
         'License :: MIT',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
