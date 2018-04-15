@@ -2,7 +2,7 @@ language: python
 python:
   - "2.7"
   - "3.6"
-# Additional services(s) required
+# Additional service(s) required
 services:
   - redis-server
 # command to install dependencies
