@@ -3,7 +3,7 @@ import uuid
 import redis
 
 from .errors import (
-    MutexLockError, BlockTimeExceedError, MutexLockValueError
+    BlockTimeExceedError, MutexLockError, MutexUnlockError
 )
 
 DEFAULT_BLOCK_TIME = 5
@@ -12,7 +12,7 @@ DEFAULT_EXPIRY = 7
 
 
 class RedisMutex(object):
-    """
+    """Implements mutex using redis
     """
     def __init__(self, redis_conn,  blocking=True,
                  block_time=DEFAULT_BLOCK_TIME, delay=DEFAULT_DELAY,
@@ -36,8 +36,7 @@ class RedisMutex(object):
         # Mutex key and mutex value are set to None by default. These
         # are automatically set when a lock is acquired and can be
         # accessed via self.key and self.value
-        self.__mkey = None
-        self.__mvalue = None
+        self.reset()
 
     def __enter__(self):
         return self
@@ -57,8 +56,12 @@ class RedisMutex(object):
     def generate_unique_id(self):
         return uuid.uuid4().__str__()
 
+    def reset(self):
+        self.__mkey = None
+        self.__mvalue = None
+
     def lock(self):
-        """
+        """Adds the mutex key to redis with the given value and expiry.
         """
         # nx=True ensures that the value must be set only when the
         # provided key does not exists in redis.
@@ -74,13 +77,14 @@ class RedisMutex(object):
         return self
 
     def unlock(self):
+        """Deletes the mutex key from redis after validating the unique
+        value for mutex.
         """
-        """
-        stored_value = self.redis.get(self.__mkey).decode("utf-8")
+        stored_value = self.redis.get(self.__mkey)
 
         # The given key does not exists in redis
         if not stored_value:
-            raise MutexLockError(
+            raise MutexUnlockError(
                 "Unable to unlock. Key '{}' does not exists in redis."
                 .format(self.__mkey)
             )
@@ -89,27 +93,31 @@ class RedisMutex(object):
         # done to remove the lock in a safe way - A lock can only be
         # removed by the process which created it. Read more at
         # https://redis.io/topics/distlock#why-failover-based-implementations-are-not-enough
-        elif not stored_value == self.__mvalue:
-            raise MutexLockValueError(
+        elif not stored_value.decode("utf-8") == self.__mvalue:
+            raise MutexUnlockError(
                 "Unable to unlock. Value for key '{}' was reset."
                 .format(self.__mkey)
             )
 
         self.redis.delete(self.__mkey)
-
-        self.__mkey = None
-        self.__mvalue = None
+        self.reset()
 
         return self
 
     def acquire_lock(self, mutex_key):
-        """
+        """Handle locking of a mutex.
         """
         self.__mkey = mutex_key
         self.__mvalue = self.generate_unique_id()
 
         if not self.blocking:
-            return self.lock()
+            try:
+                return self.lock()
+            except MutexLockError as e:
+                self.reset()
+                raise MutexLockError(
+                    "Unable to acquire lock using key '{}'".format(self.__mkey)
+                )
 
         start = int(time.time())
         elapsed_time = 0
@@ -126,16 +134,16 @@ class RedisMutex(object):
 
         # Exceeded the allowed waiting time for the mutex and failed
         # to acquire lock in this duration. Hence raise TimeOutError
+        self.reset()
         raise BlockTimeExceedError(
-            "Exceeded max allowed block time while acquiring lock. Allowed "
-            "limit is {}s, took {}s.".format(self.block_time, elapsed_time)
+            "Exceeded max allowed block time while acquiring lock."
         )
 
     def release_lock(self):
-        """
+        """Handles unlocking of a mutex.
         """
         if not self.__mkey or not self.__mvalue:
-            raise MutexLockError(
+            raise MutexUnlockError(
                 "Unable to perform operation. Found null values for mutex "
                 "key and(or) value."
             )
