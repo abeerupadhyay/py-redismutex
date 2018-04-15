@@ -22,7 +22,7 @@ class TestRedisMutex(unittest.TestCase):
         self.assertTrue(self.mutex.value)
         self.assertIsInstance(self.mutex.value, str)
         # Check if value is same as that in redis
-        redis_value = self.redis.get(self.key)
+        redis_value = self.redis.get(self.key).decode("utf-8")
         self.assertEqual(self.mutex.value, redis_value)
 
         self.mutex = self.mutex.release_lock()
@@ -40,7 +40,7 @@ class TestRedisMutex(unittest.TestCase):
             self.assertTrue(self.mutex.value)
             self.assertIsInstance(self.mutex.value, str)
             # Check if value is same as that in redis
-            redis_value = self.redis.get(self.key)
+            redis_value = self.redis.get(self.key).decode("utf-8")
             self.assertEqual(self.mutex.value, redis_value)
 
         # Check if key and value are reset to None after unlock

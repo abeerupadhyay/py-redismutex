@@ -76,7 +76,7 @@ class RedisMutex(object):
     def unlock(self):
         """
         """
-        stored_value = self.redis.get(self.__mkey)
+        stored_value = self.redis.get(self.__mkey).decode("utf-8")
 
         # The given key does not exists in redis
         if not stored_value:
