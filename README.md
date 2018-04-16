@@ -28,4 +28,4 @@ with mutex.acquire_lock(mutex_key):
     print(mutex.key, mutex.value)
 ```
 
-View detailed docs at http://py-redismutex.readthedocs.io/en/latest/
+View detailed docs at [py-redismutex.readthedocs.io](http://py-redismutex.readthedocs.io/en/latest/)
