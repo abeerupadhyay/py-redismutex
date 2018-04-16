@@ -15,8 +15,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'future==0.16.0',
-        'redis==2.10.6',
-        'six==1.10.0'
+        'redis==2.10.6'
     ],
     zip_safe=False,
     keywords="python redis mutex",
