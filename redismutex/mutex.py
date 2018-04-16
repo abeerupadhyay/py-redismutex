@@ -24,6 +24,16 @@ class RedisMutex(object):
                 "got '{}' instead".format(type(redis_conn))
             )
 
+        if delay > block_time:
+            raise ValueError(
+                "Delay for a mutex should always be less than the block time."
+            )
+
+        if expiry < block_time:
+            raise ValueError(
+                "Expiry of a mutex should always be more than the block time."
+            )
+
         self.redis = redis_conn
         self.blocking = blocking
         self.expiry = expiry

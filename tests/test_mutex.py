@@ -128,7 +128,7 @@ class TestRedisMutexKeyExpiry(unittest.TestCase):
         """When unlock is attempted after mutex key is overriden by
         another mutex after expiration.
         """
-        new_mutex = RedisMutex(self.redis, expiry=2)
+        new_mutex = RedisMutex(self.redis, block_time=1, expiry=2)
 
         with self.assertRaises(MutexUnlockError):
             # Acquire lock and release after the expiration of the key.
@@ -147,7 +147,7 @@ class TestRedisMutexKeyExpiry(unittest.TestCase):
     def test_new_mutex_lock_after_expiry(self):
         """When a new mutex tries to acquire an expried lock
         """
-        new_mutex = RedisMutex(self.redis, expiry=2)
+        new_mutex = RedisMutex(self.redis, block_time=1, expiry=2)
 
         self.mutex.acquire_lock(self.key)
         # Let the key expire...
