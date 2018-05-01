@@ -13,7 +13,7 @@ Install the package using `pip` command
 
 .. code-block:: python3
 
-   pip install -e git+https://github.com/esquarer/py-redismutex@master#egg=redismutex
+   pip install redismutex
 
 
 To apply mutex to a block of code, first create a redis connection object using ``redis.StrictRedis``. This connection object is necessary as all the mutex keys are stored in redis. Now use the ``RedisMutex`` to create a mutex object.

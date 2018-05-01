@@ -1,13 +1,14 @@
 # py-redismutex
 [![Build Status](https://travis-ci.org/esquarer/py-redismutex.svg?branch=master)](https://travis-ci.org/esquarer/py-redismutex) [![Documentation Status](https://readthedocs.org/projects/py-redismutex/badge/?version=latest)](http://py-redismutex.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/redismutex.svg)](https://badge.fury.io/py/redismutex)
 
-Python implementation of Mutex using Redis
+
+Python implementation of mutex using redis
 
 ### Installation
 
-Install using the github link
 ```shell
-pip install -e git+https://github.com/esquarer/py-redismutex@master#egg=redismutex
+pip install redismutex
 ```
 
 ### Usage
