@@ -112,7 +112,7 @@ This can be achieved by overriding the ``generate_key`` method in the ``with_red
             return str(request.user.id)
 
 
-Now you only need to pass the redis connection object in the decorator, no need for the *key*. You can use the ``new_mutex_decorator`` something like..
+Now you only need to pass the redis connection object in the decorator, no need for the *key*. You can use the ``view_with_mutex`` something like..
 
 .. code-block:: python3
 
