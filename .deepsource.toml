@@ -1,0 +1,17 @@
+version = 1
+
+exclude_patterns = [
+  "docs/*"
+]
+
+test_patterns = [
+  "tests/",
+  "test_*.py"
+]
+
+[[analyzers]]
+name = "python"
+enabled = true
+dependency_file_paths = [
+  "requirements.txt"
+]
