@@ -1,18 +1,16 @@
-import unittest
-import redis
 import time
+import unittest
+
+import redis
 
 from redismutex import RedisMutex
-from redismutex.errors import (
-    BlockTimeExceedError, MutexLockError, MutexUnlockError
-)
+from redismutex.errors import BlockTimeExceedError, MutexLockError, MutexUnlockError
 
-REDIS_CONN = redis.StrictRedis(host='localhost', port=6379, db=4)
+REDIS_CONN = redis.StrictRedis(host="localhost", port=6379, db=4)
 
 
 class TestRedisMutex(unittest.TestCase):
-    """Tests for basic locking and unlocking
-    """
+    """Tests for basic locking and unlocking"""
 
     def setUp(self):
         self.redis = REDIS_CONN
@@ -48,16 +46,15 @@ class TestRedisMutex(unittest.TestCase):
         self.assertIsNone(self.mutex.value)
 
     def test_invalid_connection(self):
-        """Check if correct redis connection is provided to RedisMutex
-        """
+        """Check if correct redis connection is provided to RedisMutex"""
         with self.assertRaises(TypeError):
-            RedisMutex('invlaid-connection')
+            RedisMutex("invlaid-connection")
 
         with self.assertRaises(TypeError):
             RedisMutex(1234)
 
         with self.assertRaises(TypeError):
-            RedisMutex({'foo': 'bar'})
+            RedisMutex({"foo": "bar"})
 
     def test_generate_unique_id(self):
         """mutex.generate_unique_id() should always generate a different
@@ -73,8 +70,7 @@ class TestRedisMutex(unittest.TestCase):
         self.assertEqual(len(unique_ids), len(set_unique_ids))
 
     def test_lock_already_exists(self):
-        """When a lock on the given key already exists.
-        """
+        """When a lock on the given key already exists."""
 
         # Create a lock using a new mutex
         new_mutex = RedisMutex(self.redis, block_time=10, expiry=12)
@@ -105,8 +101,7 @@ class TestRedisMutex(unittest.TestCase):
 
 
 class TestRedisMutexKeyExpiry(unittest.TestCase):
-    """Tests related to mutex key expiration
-    """
+    """Tests related to mutex key expiration"""
 
     def setUp(self):
         self.redis = REDIS_CONN
@@ -114,8 +109,7 @@ class TestRedisMutexKeyExpiry(unittest.TestCase):
         self.key = str(time.time())
 
     def test_key_expire(self):
-        """When unlock is attempted after key is expired
-        """
+        """When unlock is attempted after key is expired"""
         with self.assertRaises(MutexUnlockError):
             # Acquire lock and release after the expiration of the key.
             # This would raise MutexLockError as the key does not
@@ -145,8 +139,7 @@ class TestRedisMutexKeyExpiry(unittest.TestCase):
         new_mutex = new_mutex.release_lock()
 
     def test_new_mutex_lock_after_expiry(self):
-        """When a new mutex tries to acquire an expried lock
-        """
+        """When a new mutex tries to acquire an expried lock"""
         new_mutex = RedisMutex(self.redis, block_time=1, expiry=2)
 
         self.mutex.acquire_lock(self.key)

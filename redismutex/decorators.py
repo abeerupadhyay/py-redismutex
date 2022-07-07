@@ -4,8 +4,8 @@ from .mutex import RedisMutex
 
 
 class with_redismutex(object):
-    """Decorator to wrap a function in
-    """
+    """Decorator to wrap a function in"""
+
     def __init__(self, conn, key=None, **mutex_kwargs):
         self.conn = conn
         self.key = key
