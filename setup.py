@@ -16,7 +16,7 @@ setup(
     packages=find_packages(exclude=['docs', 'tests*']),
     install_requires=[
         'future==0.16.0',
-        'redis==2.10.6'
+        'redis==4.5.3'
     ],
     project_urls={
         'Source': 'https://github.com/esquarer/py-redismutex/',
